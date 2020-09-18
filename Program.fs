@@ -58,8 +58,8 @@ let initGame =
 
 let calcScore hand =
     let temp = hand |> List.sumBy(fun x -> if x.Number > 10 then 10 else x.Number)
-    hand |> List.fold (fun _ y ->
-        if y.Number = 1 && temp <= 11 then temp + 10 else temp) 0
+    hand |> List.fold (fun x y ->
+        if y.Number = 1 && x <= 11 then x + 10 else x) temp
 
 let showResult playerhand dealerhand result =
     printfn "----- Result -----"
@@ -103,7 +103,7 @@ let gameStart =
                     playerTurn h' d'
             | InputNo -> playerHand, deck
             | _ -> 
-                printfn @"y または n を入力してください！"
+                printfn @"Please enter ""y"" or ""n"" !"
                 playerTurn playerHand deck
 
     let rec dealerTurn dealerHand deck =
@@ -118,8 +118,3 @@ let gameStart =
     else
         let dealerHand', _ = dealerTurn dealerHand deck'
         judgeGame playerHand' dealerHand'
-    
-[<EntryPoint>]
-let main argv =
-    gameStart
-    0
