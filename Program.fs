@@ -25,13 +25,15 @@ let (|InputYes|InputNo|InvalidInput|) (s:string) =
 let rand = Random()
 
 let cardToString card =
-    match card.Suit with
-    | Suits.Spade -> sprintf "S%2d" card.Number   
-    | Suits.Club -> sprintf "C%2d" card.Number
-    | Suits.Diamond -> sprintf "D%2d" card.Number
-    | Suits.Heart -> sprintf "H%2d" card.Number
-    | Suits.Joker -> sprintf "JOKER"
-    | _ -> "" 
+    let suit = 
+        match card.Suit with
+        | Suits.Spade -> "S"
+        | Suits.Club -> "C"
+        | Suits.Diamond -> "D" 
+        | Suits.Heart -> "H"
+        | Suits.Joker -> sprintf "JOKER"
+        | _ -> "" 
+    sprintf "%s%2d" suit card.Number
 
 let drawHand hand =
     hand |> List.map cardToString |> List.iter (fun s -> printf "%s " s)
@@ -56,7 +58,7 @@ let initGame =
 
 let calcScore hand =
     let temp = hand |> List.sumBy(fun x -> if x.Number > 10 then 10 else x.Number)
-    hand |> List.fold (fun x y ->
+    hand |> List.fold (fun _ y ->
         if y.Number = 1 && temp <= 11 then temp + 10 else temp) 0
 
 let showResult playerhand dealerhand result =
@@ -92,10 +94,9 @@ let gameStart =
     let rec playerTurn playerHand deck =
         if (calcScore playerHand) > 21 then playerHand,deck 
         else
-            printfn "Do you draw a card? [y/n]"
+            printf "Do you draw a card? [y/n] : "
             match stdin.ReadLine() with
-            | InputYes -> 
-                
+            | InputYes ->           
                     let h',d' = pickCard playerHand deck
                     printf "Player's hand : "
                     h' |> drawHand
