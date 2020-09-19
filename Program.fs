@@ -11,6 +11,9 @@ type PlayingCard =
     { Number : int
       Suit   : Suits }
 
+    member this.GetSuitsNumber =
+        this.Suit |> int
+
 type Result =
     | PlayerWon
     | DealerWon
@@ -40,7 +43,7 @@ let drawHand hand =
     printfn ""
 
 let isCardExist card (deck:List<PlayingCard>) =
-    deck |> List.exists (fun x -> x.Number = card.Number && x.Suit = card.Suit)
+    deck |> List.exists ((=) card)
 
 let rec pickCard hand deck =
     let card = { PlayingCard.Number = rand.Next(1,13); 
@@ -57,9 +60,8 @@ let initGame =
     playerHand,dealerHand,deck''
 
 let calcScore hand =
-    let temp = hand |> List.sumBy(fun x -> if x.Number > 10 then 10 else x.Number)
-    hand |> List.fold (fun x y ->
-        if y.Number = 1 && x <= 11 then x + 10 else x) temp
+    let temp = hand |> List.sumBy(fun x -> min x.Number 10)
+    if hand |> List.exists (fun x -> x.Number = 1) && temp <= 11 then temp+10 else temp
 
 let showResult playerhand dealerhand result =
     printfn "----- Result -----"
